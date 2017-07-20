@@ -9,9 +9,9 @@
 
     error_reporting(E_ALL);
     $path = ABSPATH . 'wp-content/plugins/extensionModel/';
-    require_once($path."dbInterfaces/RepertiDbInterface.php");
-    require_once($path."dbInterfaces/PersonaDbInterface.php");
-    require_once($path."dbInterfaces/MuseoDbInterface.php");
+    include $path."dbInterfaces/RepertiDbInterface.php";
+    include $path."dbInterfaces/PersonaDbInterface.php";
+    include $path."dbInterfaces/MuseoDbInterface.php";
     /* PAGINA DELLE IMPOSTAZIONI
        Crea la pagina delle impostazioni del plugin */
 
@@ -105,7 +105,6 @@
                 <p>Questa pagina aggiunge un reperto.</p> 
                 <form method="post" action="<?php echo plugins_url() . '/gestore-reperti/inserisci_reperto.php'?>">
                     <?php settings_fields("gestore_reperti_options"); ?>
-                    <?php $options = get_option("gestore_reperti_option"); ?>
 
                     <table class="form-table">
                         <tr valign="top">
@@ -148,11 +147,13 @@
                                             $personaDbInstance = new PersonaDbInterface();
                                             $personaDbInstance->createConn();
                                             $direttori = $personaDbInstance->read();
+                                            $str = "";
                                             for($i=0; $i<count($direttori); $i++)
                                             {
-                                                echo '<option value="'.$direttori[$i]->getNumeroDocumento().
+                                                $str = '<option value="'.$direttori[$i]->getNumeroDocumento().
                                                      '">'.$direttori[$i]->getNome().' '.$direttori[$i]->getCognome().
                                                      '</option>';
+                                                echo $str;
                                             }
                                             $personaDbInstance->closeConn();
                                         ?>

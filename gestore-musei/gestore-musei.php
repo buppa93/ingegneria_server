@@ -8,8 +8,8 @@
     */
     $path = ABSPATH . 'wp-content/plugins/extensionModel/';
 
-    require($path."dbInterfaces/MuseoDbInterface.php");
-    require($path."dbInterfaces/PersonaDbInterface.php");
+    include $path."dbInterfaces/MuseoDbInterface.php";
+    include $path."dbInterfaces/PersonaDbInterface.php";
     /* PAGINA DELLE IMPOSTAZIONI
        Crea la pagina delle impostazioni del plugin */
 
@@ -87,7 +87,6 @@
                 <p>Questa pagina aggiunge un museo.</p> 
                 <form method="post" action="<?php echo plugins_url() . '/gestore-musei/inserisci_museo.php' ?>">
                     <?php settings_fields("gestore_musei_options"); ?>
-                    <?php $options = get_option("gestore_musei_option"); ?>
 
                     <table class="form-table">
                         <tr valign="top">

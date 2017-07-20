@@ -1,7 +1,7 @@
 <?php
     ini_set('display_errors',1); 
     error_reporting(E_ALL);
-    require_once("/storage/ssd4/018/2182018/public_html/wp-content/plugins/extensionModel/model/reperto.php");
+    include "/storage/ssd4/018/2182018/public_html/wp-content/plugins/extensionModel/model/reperto.php";
 
     class RepertiDbInterface
     {
@@ -56,8 +56,6 @@
                      '", "'.$reperto->getDescrizione()
                      .'", '."'"
                      .$reperto->getPubblicato()."')";
-            
-            echo $query."<br>";
 
             $result = $this->conn->query($query);
             return $result;
@@ -116,7 +114,7 @@
                      '", pubblicato='."'".$reperto->getIdAutore()."'".
                      '" WHERE id LIKE '.$reperto->getID();
 
-            if ($this->conn->query($query) === TRUE) 
+            if ($this->conn->query($query) === true) 
                 return true;
             else 
                 return false;
@@ -131,7 +129,7 @@
         {
             $query = "DELETE FROM reperto WHERE id=".$reperto->getId();
 
-            if ($this->conn->query($query) === TRUE) 
+            if ($this->conn->query($query) === true) 
                 return true;
             else 
                 return false;

@@ -1,7 +1,7 @@
 <?php
     ini_set('display_errors',1); 
     error_reporting(E_ALL);
-    include('/storage/ssd4/018/2182018/public_html/wp-content/plugins/extensionModel/model/multimedia.php');
+    include '/storage/ssd4/018/2182018/public_html/wp-content/plugins/extensionModel/model/multimedia.php';
 
     class MultimediaDbInterface
     {
@@ -87,7 +87,7 @@
                      ', url="'.$multimedia->getUrl().
                      '" WHERE id LIKE '.$multimedia->getID();
 
-            if ($this->conn->query($query) === TRUE) 
+            if ($this->conn->query($query) === true) 
                 return true;
             else 
                 return false;
@@ -102,7 +102,7 @@
         {
             $query = "DELETE FROM tipo_multimedia WHERE id=".$multimedia->getId();
 
-            if ($this->conn->query($query) === TRUE) 
+            if ($this->conn->query($query) === true) 
                 return true;
             else 
                 return false;

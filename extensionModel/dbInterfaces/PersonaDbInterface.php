@@ -1,7 +1,7 @@
 <?php
     ini_set('display_errors',1); 
     error_reporting(E_ALL);
-    require_once("/storage/ssd4/018/2182018/public_html/wp-content/plugins/extensionModel/model/persona.php");
+    include "/storage/ssd4/018/2182018/public_html/wp-content/plugins/extensionModel/model/persona.php";
 
     class PersonaDbInterface
     {
@@ -43,6 +43,7 @@
                      .$persona->getNome().'", "'.$persona->getCognome().'", '.$persona->getIdMuseo()."')";
 
             $result = $this->conn->query($query);
+            return $result;
         }
 
         /**
@@ -137,7 +138,7 @@
                      '", id_museo='.$persona->getIdMuseo().
                      ' WHERE numero_documento LIKE "'.$persona->getNumeroDocumento().'"';
 
-            if ($this->conn->query($query) === TRUE) 
+            if ($this->conn->query($query) === true) 
                 return true;
             else 
                 return false;
@@ -152,7 +153,7 @@
         {
             $query = 'DELETE FROM persona WHERE numero_documento="'.$persona->getNumeroDocumento();
 
-            if ($this->conn->query($query) === TRUE) 
+            if ($this->conn->query($query) === true) 
                 return true;
             else 
                 return false;

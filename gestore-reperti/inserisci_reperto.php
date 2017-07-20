@@ -1,7 +1,7 @@
 <?php
     ini_set('display_errors',1); 
     error_reporting(E_ALL);
-    require("/storage/ssd4/018/2182018/public_html/wp-content/plugins/extensionModel/dbInterfaces/RepertiDbInterface.php");
+    include "/storage/ssd4/018/2182018/public_html/wp-content/plugins/extensionModel/dbInterfaces/RepertiDbInterface.php";
 
     $id = $_POST['id'];
     $museo = $_POST['museo'];
@@ -24,16 +24,15 @@
     $reperto = new Reperto($id, $museo, $proprietario, $data_acquisizione, 
                         $dimensioni, $valore, $titolo, $tipo, $autore, $peso, $luogo_scoperta,
                         $data_scoperta, $bibliografia, $descrizione, $pubblicato);
-    echo "<br><br>";
-    var_dump($reperto);
-    echo "<br><br>";
     $res = $dbInstance->create($reperto);
     if($res)
+    {
         header('Location: https://smartmuseum.000webhostapp.com/wp-admin/options-general.php?page=gestorereperti');
+    }
     else
     {
-        echo $dbInstance->getConn()->error;
-        echo "non inserito";
+        header('Location: https://smartmuseum.000webhostapp.com/wp-admin/options-general.php?page=gestorereperti');
     }
     $dbInstance->closeConn();
 ?>
+        echo $dbInstance->getConn()->error;

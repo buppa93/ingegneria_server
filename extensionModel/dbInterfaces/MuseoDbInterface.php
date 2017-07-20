@@ -1,7 +1,7 @@
 <?php
     ini_set('display_errors',1); 
     error_reporting(E_ALL);
-    require_once("/storage/ssd4/018/2182018/public_html/wp-content/plugins/extensionModel/model/museo.php");
+    include "/storage/ssd4/018/2182018/public_html/wp-content/plugins/extensionModel/model/museo.php";
 
     class MuseoDbInterface
     {
@@ -42,8 +42,6 @@
                      ' VALUES ('.$museo->getId().', "'.$museo->getIdDirettore().'", "'.$museo->getNome().'", "'
                      .$museo->getCitta().'", "'.$museo->getIndirizzo().'", "'.$museo->getTelefono().'", "'
                      .$museo->getOrari().'")';
-            
-            echo $query."<br>";
 
             $result = $this->conn->query($query);
             return $result;
@@ -94,7 +92,7 @@
                      '", orari="'.$museo->getOrari().
                      '" WHERE id LIKE '.$museo->getID();
 
-            if ($this->conn->query($query) === TRUE) 
+            if ($this->conn->query($query) === true) 
                 return true;
             else 
                 return false;
@@ -109,7 +107,7 @@
         {
             $query = "DELETE FROM museo WHERE id=".$museo->getId();
 
-            if ($this->conn->query($query) === TRUE) 
+            if ($this->conn->query($query) === true) 
                 return true;
             else 
                 return false;

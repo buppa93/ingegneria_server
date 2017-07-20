@@ -8,8 +8,8 @@
     */
     
     $path = ABSPATH . 'wp-content/plugins/extensionModel/dbInterfaces/';
-    require($path."MultimediaDbInterface.php");
-    require($path."TipoMultimediaDbInterface.php");
+    include $path."MultimediaDbInterface.php";
+    include $path."TipoMultimediaDbInterface.php";
 
     /* PAGINA DELLE IMPOSTAZIONI
        Crea la pagina delle impostazioni del plugin */
@@ -82,7 +82,6 @@
                 <p>Questa pagina aggiunge un file multimediale.</p> 
                 <form method="post" action="<?php echo plugins_url() . '/gestore-multimedia/inserisci_multimedia.php'?>">
                     <?php settings_fields("gestore_multimedia_options"); ?>
-                    <?php $options = get_option("gestore_multimedia_option"); ?>
 
                     <table class="form-table">
                         <tr valign="top">
@@ -100,7 +99,7 @@
                                     <select name="id_tipo">
                                         <?php
                                             $tipiMultimediaInstance = new TipoMultimediaDbInterface();
-                                            $isConn = $tipiMultimediaInstance->createConn();
+                                            $tipiMultimediaInstance->createConn();
                                             $tipi = $tipiMultimediaInstance->read();
                                             $str = "";
                                             for($i=0; $i<count($tipi); $i++)

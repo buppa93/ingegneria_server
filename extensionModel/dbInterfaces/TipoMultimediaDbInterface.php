@@ -1,7 +1,7 @@
 <?php
     ini_set('display_errors',1); 
     error_reporting(E_ALL);
-    require_once("/storage/ssd4/018/2182018/public_html/wp-content/plugins/extensionModel/model/tipo-multimedia.php");
+    include "/storage/ssd4/018/2182018/public_html/wp-content/plugins/extensionModel/model/tipo-multimedia.php";
 
     class TipoMultimediaDbInterface
     {
@@ -42,6 +42,7 @@
                      ' VALUES ('.$tipoMultimedia->getId.', "'.$tipoMultimedia->getNome.'")';
 
             $result = $this->conn->query($query);
+            return $result;
         }
 
         /**
@@ -80,7 +81,7 @@
                      ', nome="'.$tipoMultimedia->getNome().'" '.
                      'WHERE id LIKE '.$tipoMultimedia->getID();
 
-            if ($this->conn->query($query) === TRUE) 
+            if ($this->conn->query($query) === true) 
                 return true;
             else 
                 return false;
@@ -95,7 +96,7 @@
         {
             $query = "DELETE FROM tipo_multimedia WHERE id=".$tipoMultimedia->getId();
 
-            if ($this->conn->query($query) === TRUE) 
+            if ($this->conn->query($query) === true) 
                 return true;
             else 
                 return false;
