@@ -73,25 +73,27 @@
                         $dbInstance = new RepertiDbInterface();
                         $dbInstance->createConn();
                         $reperti = $dbInstance->read();
+                        $str = "";
                         for($i=0; $i<count($reperti); $i++)
                         {
-                            echo "<tr>";
-                                echo "<td>".$reperti[$i]->getId()."</td>";
-                                echo "<td>".$reperti[$i]->getIdMuseo()."</td>";
-                                echo "<td>".$reperti[$i]->getIdProprietario()."</td>";
-                                echo "<td>".$reperti[$i]->getDataAcquisizione()."</td>";
-                                echo "<td>".$reperti[$i]->getDimensioni()."</td>";
-                                echo "<td>".$reperti[$i]->getValore()."</td>";
-                                echo "<td>".$reperti[$i]->getTitolo()."</td>";
-                                echo "<td>".$reperti[$i]->getTipo()."</td>";
-                                echo "<td>".$reperti[$i]->getNomeAutore()."</td>";
-                                echo "<td>".$reperti[$i]->getPeso()."</td>";
-                                echo "<td>".$reperti[$i]->getLuogoScoperta()."</td>";
-                                echo "<td>".$reperti[$i]->getDataScoperta()."</td>";
-                                echo "<td>".$reperti[$i]->getBibliografia()."</td>";
-                                echo "<td>".$reperti[$i]->getDescrizione()."</td>";
-                                echo "<td>".$reperti[$i]->getPubblicato()."</td>";
-                            echo "</tr>";
+                            $str = "<tr>".
+                                     "<td>".$reperti[$i]->getId()."</td>".
+                                     "<td>".$reperti[$i]->getIdMuseo()."</td>".
+                                     "<td>".$reperti[$i]->getIdProprietario()."</td>".
+                                     "<td>".$reperti[$i]->getDataAcquisizione()."</td>".
+                                     "<td>".$reperti[$i]->getDimensioni()."</td>".
+                                     "<td>".$reperti[$i]->getValore()."</td>".
+                                     "<td>".$reperti[$i]->getTitolo()."</td>".
+                                     "<td>".$reperti[$i]->getTipo()."</td>".
+                                     "<td>".$reperti[$i]->getNomeAutore()."</td>".
+                                     "<td>".$reperti[$i]->getPeso()."</td>".
+                                     "<td>".$reperti[$i]->getLuogoScoperta()."</td>".
+                                     "<td>".$reperti[$i]->getDataScoperta()."</td>".
+                                     "<td>".$reperti[$i]->getBibliografia()."</td>".
+                                     "<td>".$reperti[$i]->getDescrizione()."</td>".
+                                     "<td>".$reperti[$i]->getPubblicato()."</td>".
+                                 "</tr>";
+                            echo $str;
                         }
                         $dbInstance->closeConn();
                     ?>
@@ -123,11 +125,13 @@
                                             $museoDbInstance = new MuseoDbInterface();
                                             $museoDbInstance->createConn();
                                             $musei = $museoDbInstance->read();
+                                            $str = "";
                                             for($i=0; $i<count($musei); $i++)
                                             {
-                                                echo '<option value="'.$musei[$i]->getId().
+                                                $str = '<option value="'.$musei[$i]->getId().
                                                      '">'.$musei[$i]->getNome().
                                                      '</option>';
+                                                echo $str;
                                             }
                                             $museoDbInstance->closeConn();
                                         ?>

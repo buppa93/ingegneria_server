@@ -63,17 +63,19 @@
                         $dbInstance = new MuseoDbInterface();
                         $dbInstance->createConn();
                         $musei = $dbInstance->read();
+                        $str = "";
                         for($i=0; $i<count($musei); $i++)
                         {
-                            echo "<tr>";
-                                echo "<td>".$musei[$i]->getId()."</td>";
-                                echo "<td>".$musei[$i]->getIdDirettore()."</td>";
-                                echo "<td>".$musei[$i]->getNome()."</td>";
-                                echo "<td>".$musei[$i]->getCitta()."</td>";
-                                echo "<td>".$musei[$i]->getIndirizzo()."</td>";
-                                echo "<td>".$musei[$i]->getTelefono()."</td>";
-                                echo "<td>".$musei[$i]->getOrari()."</td>";
-                            echo "</tr>";
+                            $str = "<tr>".
+                                     "<td>".$musei[$i]->getId()."</td>".
+                                     "<td>".$musei[$i]->getIdDirettore()."</td>".
+                                     "<td>".$musei[$i]->getNome()."</td>".
+                                     "<td>".$musei[$i]->getCitta()."</td>".
+                                     "<td>".$musei[$i]->getIndirizzo()."</td>".
+                                     "<td>".$musei[$i]->getTelefono()."</td>".
+                                     "<td>".$musei[$i]->getOrari()."</td>".
+                                 "</tr>";
+                            echo $str;
                         }
                         $dbInstance->closeConn();
                     ?>
@@ -105,11 +107,13 @@
                                             $personaDbInstance = new PersonaDbInterface();
                                             $personaDbInstance->createConn();
                                             $direttori = $personaDbInstance->readOnlyDirettori();
+                                            $str = "";
                                             for($i=0; $i<count($direttori); $i++)
                                             {
-                                                echo '<option value="'.$direttori[$i]->getNumeroDocumento().
+                                                $str = '<option value="'.$direttori[$i]->getNumeroDocumento().
                                                      '">'.$direttori[$i]->getNome().' '.$direttori[$i]->getCognome().
                                                      '</option>';
+                                                echo $str;
                                             }
                                         ?>
                                     </select>

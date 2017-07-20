@@ -61,15 +61,16 @@
                         $multimediaDbInstance = new MultimediaDbInterface();
                         $multimediaDbInstance->createConn();
                         $multimedias = $multimediaDbInstance->read();
+                        $str = "";
                         for($i=0; $i<count($multimedias); $i++)
                         {
-                            echo "<tr>";
-                                echo "<td>".$multimedias[$i]->getId()."</td>";
-                                echo "<td>".$multimedias[$i]->getIdTipo()."</td>";
-                                echo "<td>".$multimedias[$i]->getIdReperto()."</td>";
-                                //echo "<td>".$multimedias[$i]->getUrl()."</td>";
-                                echo '<td><img id="img-prev" src="'.$multimedias[$i]->getUrl().'" width="100" height="100" style="max-height: 100px; width: 100px;"></td>';
-                            echo "</tr>";
+                            $str= "<tr>".
+                                    "<td>".$multimedias[$i]->getId()."</td>".
+                                    "<td>".$multimedias[$i]->getIdTipo()."</td>".
+                                    "<td>".$multimedias[$i]->getIdReperto()."</td>".
+                                    '<td><img id="img-prev" src="'.$multimedias[$i]->getUrl().'" width="100" height="100" style="max-height: 100px; width: 100px;"></td>'.
+                                 "</tr>";
+                            echo $str;
                         }
                         $multimediaDbInstance->closeConn();
                     ?>
@@ -101,13 +102,13 @@
                                             $tipiMultimediaInstance = new TipoMultimediaDbInterface();
                                             $isConn = $tipiMultimediaInstance->createConn();
                                             $tipi = $tipiMultimediaInstance->read();
+                                            $str = "";
                                             for($i=0; $i<count($tipi); $i++)
                                             {
-                                                echo '<option value="';
-                                                echo $tipi[$i]->getId();
-                                                echo '">';
-                                                echo $tipi[$i]->getNome();
-                                                echo '</option>';
+                                                $str = '<option value="'.
+                                                            $tipi[$i]->getId().'">'.$tipi[$i]->getNome().
+                                                       '</option>';
+                                                echo $str;
                                             }
                                             $tipiMultimediaInstance->closeConn();
                                         ?>
