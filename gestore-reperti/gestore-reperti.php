@@ -9,9 +9,9 @@
 
     error_reporting(E_ALL);
     $path = ABSPATH . 'wp-content/plugins/extensionModel/';
-    include $path."dbInterfaces/RepertiDbInterface.php";
-    include $path."dbInterfaces/PersonaDbInterface.php";
-    include $path."dbInterfaces/MuseoDbInterface.php";
+    include_once $path."dbInterfaces/RepertiDbInterface.php";
+    include_once $path."dbInterfaces/PersonaDbInterface.php";
+    include_once $path."dbInterfaces/MuseoDbInterface.php";
     /* PAGINA DELLE IMPOSTAZIONI
        Crea la pagina delle impostazioni del plugin */
 
@@ -38,6 +38,7 @@
 
        function gestorereperti_do_page()
        {
+           add_thickbox();
            ?>
            <link rel="stylesheet" type="text/css" href="<?php echo plugins_url() . '/gestore-reperti/tabstyle.css'?>">
            <script type="text/javascript" src="<?php echo plugins_url() . '/gestore-reperti/tabaction.js'?>"></script>
@@ -50,7 +51,13 @@
             <div id="Visualizza" class="tabcontent">
                 <h3>Visualizza</h3>
                 <p>Questa pagina visualizza i reperti.</p>
-                
+                <script type="text/javascript">
+                    function getQrCode(id)
+                    {
+                        location.href='https://smartmuseum.000webhostapp.com/wp-content/uploads/qrcodes/'
+                                        +id+'.png';
+                    }
+                </script>
                 <table class="form-table">
                     <tr valign="top">
                         <th>ID</th>
@@ -92,13 +99,19 @@
                                      "<td>".$reperti[$i]->getBibliografia()."</td>".
                                      "<td>".$reperti[$i]->getDescrizione()."</td>".
                                      "<td>".$reperti[$i]->getPubblicato()."</td>".
+                                     '<td><button type="button" onclick="getQrCode('.$reperti[$i]->getId().')">Qr Code</button></td>'.
+                                     '<td><a href="#TB_inline?width=600&height=550&inlineId=my-content-id" class="thickbox" id="'.
+                                     $reperti[$i]->getId().'">'.
+                                     '<span class="dashicons dashicons-edit"></span></a></td>'.
+                                     '<td><a href="https://smartmuseum.000webhostapp.com/wp-content/plugins/gestore-reperti/elimina.php?id='.
+                                     $reperti[$i]->getId().'" '.
+                                     'id="'.$reperti[$i]->getId().'"><span class="dashicons dashicons-trash"></span></a></td>'.
                                  "</tr>";
                             echo $str;
                         }
                         $dbInstance->closeConn();
                     ?>
                 </table>
-                
             </div>
             <div id="Aggiungi" class="tabcontent">
                 <h3>Aggiungi</h3>
@@ -272,6 +285,7 @@
                         </tr>
                     </table>
                 </form>
+                <?php makeRepertiModal(); ?>
             </div>
            </div>
             <script>
@@ -279,5 +293,183 @@
                 document.getElementById("defaultOpen").click();
             </script>
            <?php
+       }
+
+       function makeRepertiModal()
+       {    ?>
+
+            <div id="my-content-id" style="display:none;">
+                <h2>Modifica Reperto</h2>
+                <form method="post" action="<?php echo plugins_url() . '/gestore-reperti/modifica.php'?>">
+                    <?php settings_fields("gestore_reperti_options"); ?>
+
+                    <table class="form-table">
+                        <tr valign="top">
+                            <th scope="row">
+                                ID
+                                <td>
+                                    <input type="number" name="idm" class="regular-text code" />
+                                </td>
+                            </th>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row">
+                                ID MUSEO
+                                <td>
+                                    <select name="museom">
+                                        <?php
+                                            $museoDbInstance = new MuseoDbInterface();
+                                            $museoDbInstance->createConn();
+                                            $musei = $museoDbInstance->read();
+                                            $str = "";
+                                            for($i=0; $i<count($musei); $i++)
+                                            {
+                                                $str = '<option value="'.$musei[$i]->getId().
+                                                     '">'.$musei[$i]->getNome().
+                                                     '</option>';
+                                                echo $str;
+                                            }
+                                            $museoDbInstance->closeConn();
+                                        ?>
+                                    </select>
+                                </td>
+                            </th>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row">
+                                PROPRIETARIO
+                                <td>
+                                    <select name="proprietariom">
+                                        <?php
+                                            $personaDbInstance = new PersonaDbInterface();
+                                            $personaDbInstance->createConn();
+                                            $direttori = $personaDbInstance->read();
+                                            $str = "";
+                                            for($i=0; $i<count($direttori); $i++)
+                                            {
+                                                $str = '<option value="'.$direttori[$i]->getNumeroDocumento().
+                                                     '">'.$direttori[$i]->getNome().' '.$direttori[$i]->getCognome().
+                                                     '</option>';
+                                                echo $str;
+                                            }
+                                            $personaDbInstance->closeConn();
+                                        ?>
+                                    </select>
+                                </td>
+                            </th>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row">
+                                DATA ACQUISIZIONE
+                                <td>
+                                    <input type="date" name="data_acquisizionem" class="regular-text code" />
+                                </td>
+                            </th>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row">
+                                DIMENSIONI
+                                <td>
+                                    <input type="text" name="dimensionim" class="regular-text code" />
+                                </td>
+                            </th>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row">
+                                VALORE
+                                <td>
+                                    <input type="number" name="valorem" class="regular-text code" />
+                                </td>
+                            </th>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row">
+                                TITOLO
+                                <td>
+                                    <input type="text" name="titolom" class="regular-text code" />
+                                </td>
+                            </th>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row">
+                                TIPO
+                                <td>
+                                    <input type="text" name="tipom" class="regular-text code" />
+                                </td>
+                            </th>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row">
+                                NOME AUTORE
+                                <td>
+                                    <input type="text" name="autorem" class="regular-text code" />
+                                </td>
+                            </th>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row">
+                                PESO
+                                <td>
+                                    <input type="number" name="pesom" class="regular-text code" />
+                                </td>
+                            </th>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row">
+                                LUOGO SCOPERTA
+                                <td>
+                                    <input type="text" name="luogo_scopertam" class="regular-text code" />
+                                </td>
+                            </th>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row">
+                                DATA SCOPERTA
+                                <td>
+                                    <input type="date" name="data_scopertam" class="regular-text code" />
+                                </td>
+                            </th>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row">
+                                BIBLIOGRAFIA
+                                <td>
+                                    <textarea name="bibliografiam" rows="15" cols="50"></textarea>
+                                </td>
+                            </th>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row">
+                                DESCRIZIONE
+                                <td>
+                                    <textarea name="descrizionem" rows="15" cols="50"></textarea>
+                                </td>
+                            </th>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row">
+                                PUBBLICATO
+                                <td>
+                                    <select name="pubblicatom">
+                                        <option value="n">No</option>
+                                        <option value="s">Si</option>
+                                    </select>
+                                </td>
+                            </th>
+                        </tr>
+                        
+                        <tr valign="top">
+                            <th scope="row">
+                                <td>
+                                    <p class="submit">
+                                        <input type="submit" class="button-primary" value="Modifica" />
+                                    </p>
+                                </td>
+                            </th>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+            <?php
        }
 ?>

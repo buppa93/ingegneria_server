@@ -3,18 +3,13 @@
     error_reporting(E_ALL);
     include_once "/storage/ssd4/018/2182018/public_html/wp-content/plugins/extensionModel/dbInterfaces/MuseoDbInterface.php";
 
-    $id = $_POST['id'];
-    $direttore = $_POST['direttore'];
-    $telefono = $_POST['telefono'];
-    $nome = $_POST['nome'];
-    $citta = $_POST['citta'];
-    $indirizzo = $_POST['indirizzo'];
-    $orari = $_POST['orari'];
+    $id = $_GET["id"];
 
-    $dbInstance = new MuseoDbInterface();
-    $dbInstance->createConn();
-    $museo = new Museo($id, $direttore, $telefono, $nome, $citta, $indirizzo, $orari);
-    $res = $dbInstance->create($museo);
+    $museoDbInstance = new MuseoDbInterface();
+    $museoDbInstance->createConn();
+    $res = $museoDbInstance->delete($id);
+    $museoDbInstance->closeConn();
+
     if($res)
     {
         header('Location: https://smartmuseum.000webhostapp.com/wp-admin/options-general.php?page=gestoremusei');
@@ -23,5 +18,5 @@
     {
         header('Location: https://smartmuseum.000webhostapp.com/wp-admin/options-general.php?page=gestoremusei');
     }
-    $dbInstance->closeConn();
+
 ?>

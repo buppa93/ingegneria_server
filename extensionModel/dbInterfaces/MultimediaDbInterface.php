@@ -1,7 +1,7 @@
 <?php
     ini_set('display_errors',1); 
     error_reporting(E_ALL);
-    include '/storage/ssd4/018/2182018/public_html/wp-content/plugins/extensionModel/model/multimedia.php';
+    include_once '/storage/ssd4/018/2182018/public_html/wp-content/plugins/extensionModel/model/multimedia.php';
 
     class MultimediaDbInterface
     {
@@ -75,6 +75,38 @@
         }
 
         /**
+         * Preleva le informazioni relative al reperto avente lo stesso id dell'intero
+         * passato come parametro
+         * @param int $idReperto
+         * @return array
+         */
+        public function readByReperto($idReperto)
+        {
+            $query = "SELECT * FROM multimedia WHERE id_reperto LIKE ".$idReperto;
+
+            $result = $this->conn->query($query);
+
+            $multimedias = array();
+            $i = 0;
+
+            if ($result->num_rows > 0) 
+            {
+                // output data of each row
+                while($row = $result->fetch_assoc()) 
+                {
+                    $multimedias[$i]["id"] = $row["id"];
+                    $multimedias[$i]["id_tipo"] = $row["id_tipo"];
+                    $multimedias[$i]["url"] = $row["url"];
+                    $multimedias[$i]["id_reperto"] = $row["id_reperto"];
+
+                    $i++;
+                }
+            } 
+
+            return $multimedias;
+        }
+
+        /**
          * Aggiorna il multimedia passato come parametro
          * @param Multimedia $multimedia
          * @return boolean true in caso di successo, false altrimenti
@@ -94,13 +126,13 @@
         }
 
         /**
-         * Cancella il multimedia passato come parametro
-         * @param Multimedia $multimedia
+         * Cancella il multimedia avente id uguale passato come parametro
+         * @param int $id
          * @return boolean true in caso di successo, false altrimenti
          */
-        public function delete($multimedia)
+        public function delete($id)
         {
-            $query = "DELETE FROM tipo_multimedia WHERE id=".$multimedia->getId();
+            $query = "DELETE FROM multimedia WHERE id=".$id;
 
             if ($this->conn->query($query) === true) 
                 return true;

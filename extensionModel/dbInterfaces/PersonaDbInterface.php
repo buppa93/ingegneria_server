@@ -1,7 +1,7 @@
 <?php
     ini_set('display_errors',1); 
     error_reporting(E_ALL);
-    include "/storage/ssd4/018/2182018/public_html/wp-content/plugins/extensionModel/model/persona.php";
+    include_once "/storage/ssd4/018/2182018/public_html/wp-content/plugins/extensionModel/model/persona.php";
 
     class PersonaDbInterface
     {
@@ -74,6 +74,10 @@
             return $persone;
         }
 
+        /**
+         * Preleva dal database solo le persone con funzioni di direttore
+         * @return array
+         */
         public function readOnlyDirettori()
         {
             $query = "SELECT * FROM persona WHERE id_ruolo LIKE 1";
@@ -98,6 +102,10 @@
             return $direttori;
         }
 
+        /**
+         * Preleva dal database solo le persone con funzioni di autore
+         * @return array
+         */
         public function readOnlyAutori()
         {
             $query = "SELECT * FROM persona WHERE id_ruolo LIKE 2";

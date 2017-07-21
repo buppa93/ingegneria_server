@@ -1,7 +1,7 @@
 <?php
     ini_set('display_errors',1); 
     error_reporting(E_ALL);
-    include "/storage/ssd4/018/2182018/public_html/wp-content/plugins/extensionModel/model/reperto.php";
+    include_once "/storage/ssd4/018/2182018/public_html/wp-content/plugins/extensionModel/model/reperto.php";
 
     class RepertiDbInterface
     {
@@ -84,12 +84,62 @@
                                             $row["peso"], $row["luogo_scoperta"], $row["data_scoperta"], $row["bibliografia"], 
                                             $row["descrizione"], $row["pubblicato"]);
                     $reperti[$i] = $reperto;
+
                     $i++;
+                    
                 }
             } 
 
             return $reperti;
         }
+
+        /**
+         * Preleva il reperto avente id uguale all'intero passato come parametro e pubblicato = 's'
+         * @param int $id
+         * @return array
+         */
+        public function readById($id)
+        {
+            $query = 'SELECT * FROM reperto WHERE (id LIKE '.$id.' AND pubblicato LIKE \'s\')';
+
+            $result = $this->conn->query($query);
+
+            $reperti = array();
+            $i = 0;
+
+            if ($result->num_rows > 0) 
+            {
+                // output data of each row
+                while($row = $result->fetch_assoc()) 
+                {
+                    $reperto = new Reperto($row["id"], $row["id_museo"], $row["id_proprietario"], $row["data_acquisizione"], 
+                                            $row["dimensioni"], $row["valore"], $row["titolo"], $row["tipo"], $row["nome_autore"], 
+                                            $row["peso"], $row["luogo_scoperta"], $row["data_scoperta"], $row["bibliografia"], 
+                                            $row["descrizione"], $row["pubblicato"]);
+                    $reperti[$i]["id"] = $row["id"];
+                    $reperti[$i]["id_museo"] = $row["id_museo"];
+                    $reperti[$i]["id_proprietario"] = $row["id_proprietario"];
+                    $reperti[$i]["data_acquisizione"] = $row["data_acquisizione"];
+                    $reperti[$i]["dimesioni"] = $row["dimensioni"];
+                    $reperti[$i]["valore"] = $row["valore"];
+                    $reperti[$i]["titolo"] = $row["titolo"];
+                    $reperti[$i]["tipo"] = $row["tipo"];
+                    $reperti[$i]["nome_autore"] = $row["nome_autore"];
+                    $reperti[$i]["peso"] = $row["peso"];
+                    $reperti[$i]["luogo_scoperta"] = $row["luogo_scoperta"];
+                    $reperti[$i]["data_scoperta"] = $row["data_scoperta"];
+                    $reperti[$i]["bibliografia"] = $row["bibliografia"];
+                    $reperti[$i]["descrizione"] = $row["descrizione"];
+                    $reperti[$i]["pubblicato"] = $row["pubblicato"];
+
+                    $i++;
+                    
+                }
+            } 
+
+            return $reperti;
+        }
+
 
         /**
          * Aggiorna il reperto passato come parametro
@@ -111,8 +161,8 @@
                      '", data_scoperta="'.$reperto->getDataScoperta().
                      '", bibliografia="'.$reperto->getBibliografia().
                      '", descrizione="'.$reperto->getDescrizione().
-                     '", pubblicato='."'".$reperto->getIdAutore()."'".
-                     '" WHERE id LIKE '.$reperto->getID();
+                     '", pubblicato='."'".$reperto->getPubblicato()."'".
+                     ' WHERE id LIKE '.$reperto->getID();
 
             if ($this->conn->query($query) === true) 
                 return true;
@@ -121,13 +171,13 @@
         }
 
         /**
-         * Cancella il reperto passato come parametro
+         * Cancella il reperto avente id uguale a quello passato come parametro
          * @param Reperto $reperto
          * @return boolean true in caso di successo, false altrimenti
          */
-        public function delete($reperto)
+        public function delete($id)
         {
-            $query = "DELETE FROM reperto WHERE id=".$reperto->getId();
+            $query = "DELETE FROM reperto WHERE id=".$id;
 
             if ($this->conn->query($query) === true) 
                 return true;

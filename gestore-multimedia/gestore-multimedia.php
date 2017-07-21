@@ -8,8 +8,8 @@
     */
     
     $path = ABSPATH . 'wp-content/plugins/extensionModel/dbInterfaces/';
-    include $path."MultimediaDbInterface.php";
-    include $path."TipoMultimediaDbInterface.php";
+    include_once $path."MultimediaDbInterface.php";
+    include_once $path."TipoMultimediaDbInterface.php";
 
     /* PAGINA DELLE IMPOSTAZIONI
        Crea la pagina delle impostazioni del plugin */
@@ -37,6 +37,7 @@
 
        function gestoremultimedia_do_page()
        {
+           add_thickbox();
            ?>
            <link rel="stylesheet" type="text/css" href="<?php echo plugins_url().'/gestore-multimedia/tabstyle.css'?>">
            <script type="text/javascript" src="<?php echo plugins_url().'/gestore-multimedia/tabaction.js'?>"></script>
@@ -69,6 +70,12 @@
                                     "<td>".$multimedias[$i]->getIdTipo()."</td>".
                                     "<td>".$multimedias[$i]->getIdReperto()."</td>".
                                     '<td><img id="img-prev" src="'.$multimedias[$i]->getUrl().'" width="100" height="100" style="max-height: 100px; width: 100px;"></td>'.
+                                    '<td><a href="#TB_inline?width=600&height=550&inlineId=my-content-id" class="thickbox" id="'.
+                                    $multimedias[$i]->getId().'">'.
+                                    '<span class="dashicons dashicons-edit"></span></a></td>'.
+                                    '<td><a href="https://smartmuseum.000webhostapp.com/wp-content/plugins/gestore-multimedia/elimina.php?id='.
+                                    $multimedias[$i]->getId().'" '.
+                                    'id="'.$multimedias[$i]->getId().'"><span class="dashicons dashicons-trash"></span></a></td>'.
                                  "</tr>";
                             echo $str;
                         }
@@ -145,6 +152,7 @@
                         </tr>
                     </table>
                 </form>
+                <?php makeMultimediaModal(); ?>
             </div>
            </div>
             <script>
@@ -152,6 +160,75 @@
                 document.getElementById("defaultOpen").click();
             </script>
            <?php
+       }
+
+       function makeMultimediaModal()
+       { ?>
+            <div id="my-content-id" style="display:none;">
+                <h2>Modifica Multimedia</h2>
+                    <form action="<?php echo plugins_url(); ?>/gestore-multimedia/modifica.php" method="post">
+                        <table class="form-table">
+                            <tr valign="top">
+                                <th scope="row">
+                                    ID
+                                    <td>
+                                        <input type="number" name="idm" class="regular-text code" />
+                                    </td>
+                                </th>
+                            </tr>
+                            <tr valign="top">
+                                <th scope="row">
+                                    TIPO
+                                    <td>
+                                        <select name="id_tipom">
+                                        <?php    
+                                            $tipiMultimediaInstance = new TipoMultimediaDbInterface();
+                                            $tipiMultimediaInstance->createConn();
+                                            $tipi = $tipiMultimediaInstance->read();
+                                            $str = "";
+                                            for($i=0; $i<count($tipi); $i++)
+                                            {
+                                                $str = '<option value="'.
+                                                            $tipi[$i]->getId().'">'.$tipi[$i]->getNome().
+                                                        '</option>';
+                                                echo $str;
+                                            }
+                                            $tipiMultimediaInstance->closeConn();
+                                        ?>
+                                        </select>
+                                    </td>
+                                </th>
+                            </tr>
+                            <tr valign="top">
+                                <th scope="row">
+                                    REPERTO (ID)
+                                    <td>
+                                        <input type="number" name="id_repertom" class="regular-text code" />
+                                    </td>
+                                </th>
+                            </tr>
+                            <tr valign="top">
+                                <th scope="row">
+                                    FILE MULTIMEDIALE (INDIRIZZO)
+                                    <td>
+                                        <input type="text" name="urlm" class="regular-text code" />
+                                    </td>
+                                </th>
+                            </tr>
+                            <tr valign="top">
+                                <th scope="row">
+                                    <td>
+                                        <p class="submit">
+                                            <input type="submit" class="button-primary" value="Modifica" />
+                                        </p>
+                                    </td>
+                                </th>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            
+            <?php
        }
 
        function media_selector_settings_page_callback()

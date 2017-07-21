@@ -1,7 +1,7 @@
 <?php
     ini_set('display_errors',1); 
     error_reporting(E_ALL);
-    include "/storage/ssd4/018/2182018/public_html/wp-content/plugins/extensionModel/model/museo.php";
+    include_once "/storage/ssd4/018/2182018/public_html/wp-content/plugins/extensionModel/model/museo.php";
 
     class MuseoDbInterface
     {
@@ -99,13 +99,13 @@
         }
 
         /**
-         * Cancella il museo passato come parametro
+         * Cancella il museo avente id uguale a quello passato come parametro
          * @param Museo $museo
          * @return boolean true in caso di successo, false altrimenti
          */
-        public function delete($museo)
+        public function delete($id)
         {
-            $query = "DELETE FROM museo WHERE id=".$museo->getId();
+            $query = "DELETE FROM museo WHERE id=".$id;
 
             if ($this->conn->query($query) === true) 
                 return true;

@@ -15,7 +15,6 @@
         private $data_scoperta;
         private $bibliografia;
         private $descrizione;
-        private $id_multimedia;
         private $pubblicato;
         private $id_proprietario;
         private $id_museo;
@@ -35,7 +34,6 @@
          * @param [type] $data_scoperta
          * @param [type] $bibliografia
          * @param [type] $descrizione
-         * @param [type] $id_multimedia
          * @param [type] $pubblicato
          * @param [type] $id_proprietario
          * @param [type] $id_museo
@@ -56,7 +54,6 @@
             $this->data_scoperta = $data_scoperta;
             $this->bibliografia = $bibliografia;
             $this->descrizione = $descrizione;
-            $this->id_multimedia = $id_multimedia;
             $this->pubblicato = $pubblicato;
             $this->id_proprietario = $id_proprietario;
             $this->id_museo = $id_museo;
@@ -171,15 +168,6 @@
          */
         public function getDescrizione(){
             return $this->descrizione;
-        }
-
-        /**
-         * restituisce l' id multimediale
-         *
-         * @return void
-         */
-        public function getIdMultimedia(){
-            return $this->id_multimedia;
         }
 
         /**
@@ -327,16 +315,6 @@
          */
         public function setDescrizione($descrizione){
             $this->descrizione=$descrizione;
-        }
-
-        /**
-         * setta l'id multimedia
-         *
-         * @param [type] $id_multimedia
-         * @return void
-         */
-        public function setIdMultimedia($id_multimedia){
-            $this->id_multimedia=$id_multimedia;
         }
 
         /**

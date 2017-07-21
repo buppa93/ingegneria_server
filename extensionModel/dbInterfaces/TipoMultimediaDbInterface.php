@@ -1,7 +1,7 @@
 <?php
     ini_set('display_errors',1); 
     error_reporting(E_ALL);
-    include "/storage/ssd4/018/2182018/public_html/wp-content/plugins/extensionModel/model/tipo-multimedia.php";
+    include_once "/storage/ssd4/018/2182018/public_html/wp-content/plugins/extensionModel/model/tipo-multimedia.php";
 
     class TipoMultimediaDbInterface
     {

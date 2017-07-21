@@ -8,8 +8,8 @@
     */
     $path = ABSPATH . 'wp-content/plugins/extensionModel/';
 
-    include $path."dbInterfaces/MuseoDbInterface.php";
-    include $path."dbInterfaces/PersonaDbInterface.php";
+    include_once $path."dbInterfaces/MuseoDbInterface.php";
+    include_once $path."dbInterfaces/PersonaDbInterface.php";
     /* PAGINA DELLE IMPOSTAZIONI
        Crea la pagina delle impostazioni del plugin */
 
@@ -36,6 +36,7 @@
 
        function gestoremusei_do_page()
        {
+           add_thickbox();
            ?>
            <link rel="stylesheet" type="text/css" href="<?php echo plugins_url() . '/gestore-musei/tabstyle.css'?>">
            <script type="text/javascript" src="<?php echo plugins_url() . '/gestore-musei/tabaction.js'?>"></script>
@@ -74,6 +75,12 @@
                                      "<td>".$musei[$i]->getIndirizzo()."</td>".
                                      "<td>".$musei[$i]->getTelefono()."</td>".
                                      "<td>".$musei[$i]->getOrari()."</td>".
+                                     '<td><a href="#TB_inline?width=600&height=550&inlineId=my-content-id" class="thickbox" id="'.
+                                     $musei[$i]->getId().'">'.
+                                     '<span class="dashicons dashicons-edit"></span></a></td>'.
+                                     '<td><a href="https://smartmuseum.000webhostapp.com/wp-content/plugins/gestore-musei/elimina.php?id='.
+                                     $musei[$i]->getId().'" '.
+                                     'id="'.$musei[$i]->getId().'"><span class="dashicons dashicons-trash"></span></a></td>'.
                                  "</tr>";
                             echo $str;
                         }
@@ -170,6 +177,7 @@
                         </tr>
                     </table>
                 </form>
+                <?php makeMuseiModal(); ?>
             </div>
            </div>
             <script>
@@ -177,5 +185,100 @@
                 document.getElementById("defaultOpen").click();
             </script>
            <?php
+       }
+
+       function makeMuseiModal()
+       { 
+            ?> 
+            <div id="my-content-id" style="display:none;">
+                <h2>Modifica Museo</h2>
+                <form method="post" action="<?php echo plugins_url() . '/gestore-musei/modifica.php' ?>">
+                    <?php settings_fields("gestore_musei_options"); ?>
+
+                    <table class="form-table">
+                        <tr valign="top">
+                            <th scope="row">
+                                ID
+                                <td>
+                                    <input type="number" name="idm" class="regular-text code" />
+                                </td>
+                            </th>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row">
+                                DIRETTORE
+                                <td>
+                                    <select name="direttorem">
+                                        <?php
+                                            $personaDbInstance = new PersonaDbInterface();
+                                            $personaDbInstance->createConn();
+                                            $direttori = $personaDbInstance->readOnlyDirettori();
+                                            $str = "";
+                                            for($i=0; $i<count($direttori); $i++)
+                                            {
+                                                $str = '<option value="'.$direttori[$i]->getNumeroDocumento().
+                                                     '">'.$direttori[$i]->getNome().' '.$direttori[$i]->getCognome().
+                                                     '</option>';
+                                                echo $str;
+                                            }
+                                        ?>
+                                    </select>
+                                </td>
+                            </th>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row">
+                                TELEFONO
+                                <td>
+                                    <input type="tel" name="telefonom" class="regular-text code" />
+                                </td>
+                            </th>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row">
+                                NOME
+                                <td>
+                                    <input type="text" name="nomem" class="regular-text code" />
+                                </td>
+                            </th>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row">
+                                CITTA'
+                                <td>
+                                    <input type="text" name="cittam" class="regular-text code" />
+                                </td>
+                            </th>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row">
+                                INDIRIZZO
+                                <td>
+                                    <input type="text" name="indirizzom" class="regular-text code" />
+                                </td>
+                            </th>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row">
+                                ORARI
+                                <td>
+                                    <textarea name="orarim" rows="15" cols="50"></textarea>
+                                </td>
+                            </th>
+                        </tr>
+                        <tr valign="top">
+                            <th scope="row">
+                                <td>
+                                    <p class="submit">
+                                        <input type="submit" class="button-primary" value="Modifica" />
+                                    </p>
+                                </td>
+                            </th>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+
+            <?php
        }
 ?>
