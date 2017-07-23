@@ -77,6 +77,31 @@
         }
 
         /**
+         * Preleva tutti i musei dal database
+         * @return array
+         */
+        public function readById($id)
+        {
+            $query = "SELECT * FROM museo WHERE id LIKE ".$id;
+
+            $result = $this->conn->query($query);
+
+            if ($result->num_rows > 0) 
+            {
+                // output data of each row
+                while($row = $result->fetch_assoc()) 
+                {
+                    $museo = new Museo($row["id"], $row["id_direttore"], $row["telefono"],
+                                        $row["nome"], $row["citta"], $row["indirizzo"],
+                                        $row["orari"]);
+                }
+            } 
+
+            return $museo;
+        }
+
+
+        /**
          * Aggiorna il museo passato come parametro
          * @param Museo $museo
          * @return boolean true in caso di successo, false altrimenti
