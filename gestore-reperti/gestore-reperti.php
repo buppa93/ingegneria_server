@@ -6,8 +6,6 @@
     Version: 0.0.1
     Author: Giuseppe Antonio Sansone
     */
-
-    error_reporting(E_ALL);
     $path = ABSPATH . 'wp-content/plugins/extensionModel/';
     include_once $path."dbInterfaces/RepertiDbInterface.php";
     include_once $path."dbInterfaces/PersonaDbInterface.php";
@@ -25,6 +23,7 @@
        function gestore_reperti_init()
        {
            register_setting('gestore_reperti_options', 'gestore_reperti_option', 'gestore_reperti_validate');
+           wp_enqueue_script('jquery');
        }
 
        //$musei = array();
@@ -33,13 +32,16 @@
        //Aggiunge al menu
        function gestore_reperti_add_page()
        {
-           add_options_page('Gestore Reperti', 'Gestore Reperti', 'manage_options', 'gestorereperti', 'gestorereperti_do_page');
+           add_menu_page('Gestore Reperti', 'Gestore Reperti', 'manage_options', 'gestorereperti', 'gestorereperti_do_page', 'dashicons-art');
        }
 
        function gestorereperti_do_page()
        {
+           $current_user = new CmUser(wp_get_current_user());
+           $current_user->setUserCookie();
            add_thickbox();
            ?>
+           <input type="hidden" name="userrole" id="userrole" value="<?php echo $_SESSION["UserRole"]; ?>" />
            <link rel="stylesheet" type="text/css" href="<?php echo plugins_url() . '/gestore-reperti/tabstyle.css'?>">
            <script type="text/javascript" src="<?php echo plugins_url() . '/gestore-reperti/tabaction.js'?>"></script>
            <div class="wrap">
@@ -80,40 +82,81 @@
                         $dbInstance = new RepertiDbInterface();
                         $dbInstance->createConn();
                         $reperti = $dbInstance->read();
+                        $usrId = $current_user->getUser()->ID;
                         $str = "";
-                        for($i=0; $i<count($reperti); $i++)
-                        {
-                            $str = "<tr>".
-                                     "<td>".$reperti[$i]->getId()."</td>".
-                                     "<td>".$reperti[$i]->getIdMuseo()."</td>".
-                                     "<td>".$reperti[$i]->getIdProprietario()."</td>".
-                                     "<td>".$reperti[$i]->getDataAcquisizione()."</td>".
-                                     "<td>".$reperti[$i]->getDimensioni()."</td>".
-                                     "<td>".$reperti[$i]->getValore()."</td>".
-                                     "<td>".$reperti[$i]->getTitolo()."</td>".
-                                     "<td>".$reperti[$i]->getTipo()."</td>".
-                                     "<td>".$reperti[$i]->getNomeAutore()."</td>".
-                                     "<td>".$reperti[$i]->getPeso()."</td>".
-                                     "<td>".$reperti[$i]->getLuogoScoperta()."</td>".
-                                     "<td>".$reperti[$i]->getDataScoperta()."</td>".
-                                     "<td>".$reperti[$i]->getBibliografia()."</td>".
-                                     "<td>".$reperti[$i]->getDescrizione()."</td>".
-                                     "<td>".$reperti[$i]->getPubblicato()."</td>".
-                                     '<td><button type="button" onclick="getQrCode('.$reperti[$i]->getId().')">Qr Code</button></td>'.
-                                     '<td><a href="#TB_inline?width=600&height=550&inlineId=my-content-id" class="thickbox" id="'.
-                                     $reperti[$i]->getId().'">'.
-                                     '<span class="dashicons dashicons-edit"></span></a></td>'.
-                                     '<td><a href="https://smartmuseum.000webhostapp.com/wp-content/plugins/gestore-reperti/elimina.php?id='.
-                                     $reperti[$i]->getId().'" '.
-                                     'id="'.$reperti[$i]->getId().'"><span class="dashicons dashicons-trash"></span></a></td>'.
-                                 "</tr>";
-                            echo $str;
-                        }
                         $dbInstance->closeConn();
+                        if(!$current_user->isProprietario())
+                        {
+                            for($i=0; $i<count($reperti); $i++)
+                            {
+                                $str = "<tr>".
+                                        '<td id="id'.$reperti[$i]->getId().'">'.$reperti[$i]->getId()."</td>".
+                                        '<td id="museo'.$reperti[$i]->getId().'">'.$reperti[$i]->getIdMuseo()."</td>".
+                                        '<td id="proprietario'.$reperti[$i]->getId().'">'.$reperti[$i]->getIdProprietario()."</td>".
+                                        '<td id="dataAcquisizione'.$reperti[$i]->getId().'">'.$reperti[$i]->getDataAcquisizione()."</td>".
+                                        '<td id="dimensioni'.$reperti[$i]->getId().'">'.$reperti[$i]->getDimensioni()."</td>".
+                                        '<td id="valore'.$reperti[$i]->getId().'">'.$reperti[$i]->getValore()."</td>".
+                                        '<td id="titolo'.$reperti[$i]->getId().'">'.$reperti[$i]->getTitolo()."</td>".
+                                        '<td id="tipo'.$reperti[$i]->getId().'">'.$reperti[$i]->getTipo()."</td>".
+                                        '<td id="autore'.$reperti[$i]->getId().'">'.$reperti[$i]->getNomeAutore()."</td>".
+                                        '<td id="peso'.$reperti[$i]->getId().'">'.$reperti[$i]->getPeso()."</td>".
+                                        '<td id="lScoperta'.$reperti[$i]->getId().'">'.$reperti[$i]->getLuogoScoperta()."</td>".
+                                        '<td id="dScoperta'.$reperti[$i]->getId().'">'.$reperti[$i]->getDataScoperta()."</td>".
+                                        '<td id="bibliografia'.$reperti[$i]->getId().'">'.$reperti[$i]->getBibliografia()."</td>".
+                                        '<td id="descrizione'.$reperti[$i]->getId().'">'.$reperti[$i]->getDescrizione()."</td>".
+                                        '<td id="pubblicato'.$reperti[$i]->getId().'">'.$reperti[$i]->getPubblicato()."</td>".
+                                        '<td><button type="button" onclick="getQrCode('.$reperti[$i]->getId().')">Qr Code</button></td>'.
+                                        '<td><a href="#TB_inline?width=600&height=550&inlineId=edit-reperto" class="thickbox" id="'.
+                                        $reperti[$i]->getId().'" onClick="setEditPage('.$reperti[$i]->getId().')">'.
+                                        '<span class="dashicons dashicons-edit edit-rep"></span></a></td>'.
+                                        '<td><a href="https://smartmuseum.000webhostapp.com/wp-content/plugins/gestore-reperti/elimina.php?id='.
+                                        $reperti[$i]->getId().'" '.
+                                        'id="'.$reperti[$i]->getId().'"><span class="dashicons dashicons-trash trash-rep"></span></a></td>'.
+                                    "</tr>";
+                                echo $str;
+                            }
+                        }
+                        else
+                        {
+                            $dbInstance = new RepertiDbInterface();
+                            $dbInstance->createConn();
+                            $reperti = $dbInstance->read();
+                            $usrId = $current_user->getUser()->ID;
+                            $str = "";
+                            $dbInstance->closeConn();
+                            foreach($reperti as $reperto)
+                            {
+                                if($reperto->getIdProprietario() == $usrId)
+                                {
+                                    $str = "<tr>".
+                                        '<td id="id'.$reperto->getId().'">'.$reperto->getId()."</td>".
+                                        '<td id="museo'.$reperto->getId().'">'.$reperto->getIdMuseo()."</td>".
+                                        '<td id="proprietario'.$reperto->getId().'">'.$reperto->getIdProprietario()."</td>".
+                                        '<td id="dataAcquisizione'.$reperto->getId().'">'.$reperto->getDataAcquisizione()."</td>".
+                                        '<td id="dimensioni'.$reperto->getId().'">'.$reperto->getDimensioni()."</td>".
+                                        '<td id="valore'.$reperto->getId().'">'.$reperto->getValore()."</td>".
+                                        '<td id="titolo'.$reperto->getId().'">'.$reperto->getTitolo()."</td>".
+                                        '<td id="tipo'.$reperto->getId().'">'.$reperto->getTipo()."</td>".
+                                        '<td id="autore'.$reperto->getId().'">'.$reperto->getNomeAutore()."</td>".
+                                        '<td id="peso'.$reperto->getId().'">'.$reperto->getPeso()."</td>".
+                                        '<td id="lScoperta'.$reperto->getId().'">'.$reperto->getLuogoScoperta()."</td>".
+                                        '<td id="dScoperta'.$reperto->getId().'">'.$reperto->getDataScoperta()."</td>".
+                                        '<td id="bibliografia'.$reperto->getId().'">'.$reperto->getBibliografia()."</td>".
+                                        '<td id="descrizione'.$reperto->getId().'">'.$reperto->getDescrizione()."</td>".
+                                        '<td id="pubblicato'.$reperto->getId().'">'.$reperto->getPubblicato()."</td>".
+                                        '<td><button type="button" onclick="getQrCode('.$reperto->getId().')">Qr Code</button></td>'.
+                                        '<td><a href="#TB_inline?width=600&height=550&inlineId=edit-reperto" class="thickbox" id="'.
+                                        $reperto->getId().'" onClick="setEditPage('.$reperto->getId().')">'.
+                                        '<span class="dashicons dashicons-edit edit-rep"></span></a></td>'.
+                                        '</tr>';
+                                    echo $str;
+                                }
+                            }
+                        }
                     ?>
                 </table>
             </div>
-            <div id="Aggiungi" class="tabcontent">
+            <div id="Aggiungi" class="tabcontent aggiungirep">
                 <h3>Aggiungi</h3>
                 <p>Questa pagina aggiunge un reperto.</p> 
                 <form method="post" action="<?php echo plugins_url() . '/gestore-reperti/inserisci_reperto.php'?>">
@@ -157,18 +200,18 @@
                                 <td>
                                     <select name="proprietario">
                                         <?php
-                                            $personaDbInstance = new PersonaDbInterface();
-                                            $personaDbInstance->createConn();
-                                            $direttori = $personaDbInstance->read();
+                                            $proprietari = get_users(array(
+                                                                            'role'   => 'contributor',
+                                                                            'fields' => 'all'
+                                                                        ));
                                             $str = "";
-                                            for($i=0; $i<count($direttori); $i++)
+                                            foreach($proprietari as $proprietario)
                                             {
-                                                $str = '<option value="'.$direttori[$i]->getNumeroDocumento().
-                                                     '">'.$direttori[$i]->getNome().' '.$direttori[$i]->getCognome().
+                                                $str = '<option value="'.$proprietario->ID.
+                                                     '">'.$proprietario->first_name.' '.$proprietario->last_name.
                                                      '</option>';
                                                 echo $str;
                                             }
-                                            $personaDbInstance->closeConn();
                                         ?>
                                     </select>
                                 </td>
@@ -278,7 +321,7 @@
                             <th scope="row">
                                 <td>
                                     <p class="submit">
-                                        <input type="submit" class="button-primary" value="Inserisci" />
+                                        <input type="submit" id="submitrep" class="button-primary" value="Inserisci" />
                                     </p>
                                 </td>
                             </th>
@@ -288,27 +331,63 @@
                 <?php makeRepertiModal(); ?>
             </div>
            </div>
-            <script>
+            <script type="text/javascript">
                 // Get the element with id="defaultOpen" and click on it
                 document.getElementById("defaultOpen").click();
+            </script>
+            <script type="text/javascript">
+                function setEditPage(id)
+                {
+                    museo = document.getElementById("museo"+id).innerHTML;
+                    proprietario = document.getElementById("proprietario"+id).innerHTML;
+                    dAcquisizione = document.getElementById("dataAcquisizione"+id).innerHTML;
+                    dimensioni = document.getElementById("dimensioni"+id).innerHTML;
+                    valore = document.getElementById("valore"+id).innerHTML;
+                    titolo = document.getElementById("titolo"+id).innerHTML;
+                    tipo = document.getElementById("tipo"+id).innerHTML;
+                    autore = document.getElementById("autore"+id).innerHTML;
+                    peso = document.getElementById("peso"+id).innerHTML;
+                    lScoperta = document.getElementById("lScoperta"+id).innerHTML;
+                    dScoperta = document.getElementById("dScoperta"+id).innerHTML;
+                    bibliografia = document.getElementById("bibliografia"+id).innerHTML;
+                    descrizione = document.getElementById("descrizione"+id).innerHTML;
+                    pubblicato = document.getElementById("pubblicato"+id).innerHTML;
+                    document.getElementById("editid").value=id;
+                    document.getElementById("editmuseo").value=museo;
+                    document.getElementById("editproprietario").value=proprietario;
+                    document.getElementById("editacquisizione").value=dAcquisizione;
+                    document.getElementById("editdimensioni").value=dimensioni;
+                    document.getElementById("editvalore").value=valore;
+                    document.getElementById("edittitolo").value=titolo;
+                    document.getElementById("edittipo").value=tipo;
+                    document.getElementById("editautore").value=autore;
+                    document.getElementById("editpeso").value=peso;
+                    document.getElementById("editlscoperta").value=lScoperta;
+                    document.getElementById("editdscoperta").value=dScoperta;
+                    document.getElementById("editbibliografia").value=bibliografia;
+                    document.getElementById("editdescrizione").value=descrizione;
+                    document.getElementById("editpubblicato").value=pubblicato;
+                }
             </script>
            <?php
        }
 
        function makeRepertiModal()
-       {    ?>
+       {
+            
+               
+            ?>
 
-            <div id="my-content-id" style="display:none;">
+            <div id="edit-reperto" style="display:none;">
                 <h2>Modifica Reperto</h2>
                 <form method="post" action="<?php echo plugins_url() . '/gestore-reperti/modifica.php'?>">
-                    <?php settings_fields("gestore_reperti_options"); ?>
 
                     <table class="form-table">
                         <tr valign="top">
                             <th scope="row">
                                 ID
                                 <td>
-                                    <input type="number" name="idm" class="regular-text code" />
+                                    <input type="number" id="editid" name="idm" class="regular-text code" />
                                 </td>
                             </th>
                         </tr>
@@ -316,7 +395,7 @@
                             <th scope="row">
                                 ID MUSEO
                                 <td>
-                                    <select name="museom">
+                                    <select name="museom" id="editmuseo">
                                         <?php
                                             $museoDbInstance = new MuseoDbInterface();
                                             $museoDbInstance->createConn();
@@ -339,20 +418,20 @@
                             <th scope="row">
                                 PROPRIETARIO
                                 <td>
-                                    <select name="proprietariom">
+                                    <select name="proprietariom" id="editproprietario">
                                         <?php
-                                            $personaDbInstance = new PersonaDbInterface();
-                                            $personaDbInstance->createConn();
-                                            $direttori = $personaDbInstance->read();
+                                            $proprietari = get_users(array(
+                                                                            'role'   => 'contributor',
+                                                                            'fields' => 'all'
+                                                                        ));
                                             $str = "";
-                                            for($i=0; $i<count($direttori); $i++)
+                                            foreach($proprietari as $proprietario)
                                             {
-                                                $str = '<option value="'.$direttori[$i]->getNumeroDocumento().
-                                                     '">'.$direttori[$i]->getNome().' '.$direttori[$i]->getCognome().
+                                                $str = '<option value="'.$proprietario->ID.
+                                                     '">'.$proprietario->first_name.' '.$proprietario->last_name.
                                                      '</option>';
                                                 echo $str;
                                             }
-                                            $personaDbInstance->closeConn();
                                         ?>
                                     </select>
                                 </td>
@@ -362,7 +441,7 @@
                             <th scope="row">
                                 DATA ACQUISIZIONE
                                 <td>
-                                    <input type="date" name="data_acquisizionem" class="regular-text code" />
+                                    <input type="date" id="editacquisizione" name="data_acquisizionem" class="regular-text code" />
                                 </td>
                             </th>
                         </tr>
@@ -370,7 +449,7 @@
                             <th scope="row">
                                 DIMENSIONI
                                 <td>
-                                    <input type="text" name="dimensionim" class="regular-text code" />
+                                    <input type="text" id="editdimensioni" name="dimensionim" class="regular-text code" />
                                 </td>
                             </th>
                         </tr>
@@ -378,7 +457,7 @@
                             <th scope="row">
                                 VALORE
                                 <td>
-                                    <input type="number" name="valorem" class="regular-text code" />
+                                    <input type="number" id="editvalore" name="valorem" class="regular-text code" />
                                 </td>
                             </th>
                         </tr>
@@ -386,7 +465,7 @@
                             <th scope="row">
                                 TITOLO
                                 <td>
-                                    <input type="text" name="titolom" class="regular-text code" />
+                                    <input type="text" id="edittitolo" name="titolom" class="regular-text code" />
                                 </td>
                             </th>
                         </tr>
@@ -394,7 +473,7 @@
                             <th scope="row">
                                 TIPO
                                 <td>
-                                    <input type="text" name="tipom" class="regular-text code" />
+                                    <input type="text" id="edittipo" name="tipom" class="regular-text code" />
                                 </td>
                             </th>
                         </tr>
@@ -402,7 +481,7 @@
                             <th scope="row">
                                 NOME AUTORE
                                 <td>
-                                    <input type="text" name="autorem" class="regular-text code" />
+                                    <input type="text" id="editautore" name="autorem" class="regular-text code" />
                                 </td>
                             </th>
                         </tr>
@@ -410,7 +489,7 @@
                             <th scope="row">
                                 PESO
                                 <td>
-                                    <input type="number" name="pesom" class="regular-text code" />
+                                    <input type="number" id="editpeso" name="pesom" class="regular-text code" />
                                 </td>
                             </th>
                         </tr>
@@ -418,7 +497,7 @@
                             <th scope="row">
                                 LUOGO SCOPERTA
                                 <td>
-                                    <input type="text" name="luogo_scopertam" class="regular-text code" />
+                                    <input type="text" id="editlscoperta" name="luogo_scopertam" class="regular-text code" />
                                 </td>
                             </th>
                         </tr>
@@ -426,7 +505,7 @@
                             <th scope="row">
                                 DATA SCOPERTA
                                 <td>
-                                    <input type="date" name="data_scopertam" class="regular-text code" />
+                                    <input type="date" id="editdscoperta" name="data_scopertam" class="regular-text code" />
                                 </td>
                             </th>
                         </tr>
@@ -434,7 +513,7 @@
                             <th scope="row">
                                 BIBLIOGRAFIA
                                 <td>
-                                    <textarea name="bibliografiam" rows="15" cols="50"></textarea>
+                                    <textarea name="bibliografiam" id="editbibliografia" rows="15" cols="50"></textarea>
                                 </td>
                             </th>
                         </tr>
@@ -442,7 +521,7 @@
                             <th scope="row">
                                 DESCRIZIONE
                                 <td>
-                                    <textarea name="descrizionem" rows="15" cols="50"></textarea>
+                                    <textarea name="descrizionem" id="editdescrizione" rows="15" cols="50"></textarea>
                                 </td>
                             </th>
                         </tr>
@@ -450,7 +529,7 @@
                             <th scope="row">
                                 PUBBLICATO
                                 <td>
-                                    <select name="pubblicatom">
+                                    <select name="pubblicatom" id="editpubblicato">
                                         <option value="n">No</option>
                                         <option value="s">Si</option>
                                     </select>
@@ -462,13 +541,14 @@
                             <th scope="row">
                                 <td>
                                     <p class="submit">
-                                        <input type="submit" class="button-primary" value="Modifica" />
+                                        <input type="submit" id="editrep" class="button-primary" value="Modifica" />
                                     </p>
                                 </td>
                             </th>
                         </tr>
                     </table>
                 </form>
+                <script type="text/javascript" src="../wp-content/plugins/extensionModel/securityCheck.js" />
             </div>
             <?php
        }

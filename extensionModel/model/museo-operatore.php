@@ -1,6 +1,6 @@
 <?php
 /**
- * Gestisce file multimediali
+ * Astrae le associazioni museo-operatore
  */
 class MuseoOperatore{
     private $id_museo;
@@ -8,9 +8,8 @@ class MuseoOperatore{
 
     /**
      * costruttore parametrizzato
-     *
-     * @param [type] $id
-     * @param [type] $id_tipo
+     * @param int $id_museo
+     * @param int $id_operatore
      * @return void
      */
     public function __construct($id_museo, $id_operatore){
@@ -19,27 +18,24 @@ class MuseoOperatore{
     }
 
     /**
-     * restituisce l' id del file multimediale
-     *
-     * @return void
+     * restituisce l'id del museo
+     * @return int
      */
     public function getIdMuseo(){
         return $this->id_museo;
     }
     
     /**
-     * restituisce l'id del tipo di file multimediale
-     *
-     * @return void
+     * restituisce l'id dell'operatore
+     * @return int
      */
     public function getIdOperatore(){
         return $this->id_operatore;
     }
 
     /**
-     * setta l'id multimedia
-     *
-     * @param [type] $id
+     * setta l'id del museo
+     * @param int $id
      * @return void
      */
     public function setIdMuseo($id_museo){
@@ -47,9 +43,8 @@ class MuseoOperatore{
     }
 
     /**
-     * setta l'id del reperto
-     *
-     * @param [type] $id_reperto
+     * setta l'iddell'oggetto
+     * @param int $id_reperto
      * @return void
      */
     public function setIdOperatore($id_operatore){

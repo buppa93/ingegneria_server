@@ -22,21 +22,21 @@
         /**
          * costruttore parametrizzato
          *
-         * @param [type] $id
-         * @param [type] $data_acquisizione
-         * @param [type] $dimensioni
-         * @param [type] $valore
-         * @param [type] $titolo
-         * @param [type] $tipo
-         * @param [type] $nome_autore
-         * @param [type] $peso
-         * @param [type] $luogo_scoperta
-         * @param [type] $data_scoperta
-         * @param [type] $bibliografia
-         * @param [type] $descrizione
-         * @param [type] $pubblicato
-         * @param [type] $id_proprietario
-         * @param [type] $id_museo
+         * @param int $id
+         * @param string $data_acquisizione
+         * @param string $dimensioni
+         * @param double $valore
+         * @param string $titolo
+         * @param string $tipo
+         * @param string $nome_autore
+         * @param double $peso
+         * @param string $luogo_scoperta
+         * @param string $data_scoperta
+         * @param string $bibliografia
+         * @param string $descrizione
+         * @param char $pubblicato
+         * @param int $id_proprietario
+         * @param int $id_museo
          */
         public function __construct($id, $id_museo, $id_proprietario, $data_acquisizione, 
                     $dimensioni, $valore, $titolo, $tipo, $nome_autore, $peso, $luogo_scoperta, 
@@ -63,8 +63,7 @@
              
         /**
          * restituisce l'id del reperto
-         *
-         * @return void
+         * @return int
          */
         public function getId() {
             //$this rappresenta l'oggetto che sarà costruito a runtime
@@ -73,8 +72,7 @@
 
         /**
          * restituisce la data acquisizione reperto
-         *
-         * @return void
+         * @return string
          */
         public function getDataAcquisizione(){
             return $this->data_acquisizione;
@@ -82,8 +80,7 @@
 
         /**
          * restituisce le dimensioni del reperto
-         *
-         * @return void
+         * @return string
          */
         public function getDimensioni(){
             return $this->dimensioni;
@@ -91,8 +88,7 @@
 
         /**
          * restituisce il valore reperto
-         *
-         * @return void
+         * @return double
          */
         public function getValore(){
             return $this->valore;
@@ -100,8 +96,7 @@
         
         /**
          * restituisce il nome del reperto 
-         *
-         * @return void
+         * @return string
          */
         public function getTitolo(){
             return $this->titolo;
@@ -109,17 +104,15 @@
 
         /**
          * restituisce il tipo del reperto
-         *
-         * @return void
+         * @return string
          */
         public function getTipo(){
             return $this->tipo;
         }
         
         /**
-         * restituisce l' id dell'autore del reperto
-         *
-         * @return void
+         * restituisce il nome dell'autore del reperto
+         * @return string
          */
         public function getNomeAutore(){
             return $this->nome_autore;
@@ -127,8 +120,7 @@
 
         /**
          * restituisce il peso del reperto
-         *
-         * @return void
+         * @return double
          */
         public function getPeso(){
             return $this->peso;
@@ -136,8 +128,7 @@
 
         /**
          * restituisce il luogo della scoperta del reperto
-         *
-         * @return void
+         * @return string
          */
         public function getLuogoScoperta(){
             return $this->luogo_scoperta;
@@ -145,8 +136,7 @@
 
         /**
          * restituisce la data della scoperta del reperto
-         *
-         * @return void
+         * @return string
          */
         public function getDataScoperta(){
             return $this->data_scoperta;
@@ -154,8 +144,7 @@
 
         /**
          * restituisce la bibliografia del reperto
-         *
-         * @return void
+         * @return string
          */
         public function getBibliografia(){
             return $this->bibliografia;
@@ -163,8 +152,7 @@
 
         /**
          * restituisce la descrizione del reperto
-         *
-         * @return void
+         * @return string
          */
         public function getDescrizione(){
             return $this->descrizione;
@@ -172,8 +160,7 @@
 
         /**
          * controlla se il reperto è stato pubblicato o meno
-         *
-         * @return void
+         * @return char
          */
         public function getPubblicato(){
             return $this->pubblicato;
@@ -181,8 +168,7 @@
 
         /**
          * restituisce l'id del proprietario del reperto
-         *
-         * @return void
+         * @return int
          */
         public function getIdProprietario(){
             return $this->id_proprietario;
@@ -190,8 +176,7 @@
 
         /**
          * restituisce l'id del museo in cui si trova il reperto
-         *
-         * @return void
+         * @return int
          */
         public function getIdMuseo(){
             return $this->id_museo;
@@ -199,8 +184,7 @@
 
         /**
          * setta l'id reperto
-         *
-         * @param [type] $id
+         * @param int $id
          * @return void
          */
         public function setID($id){
@@ -209,8 +193,7 @@
 
         /**
          * setta la data acquisizione reperto
-         *
-         * @param [type] $data_acquisizione
+         * @param string $data_acquisizione
          * @return void
          */
         public function setDataAcquisizione($data_acquisizione){
@@ -219,8 +202,7 @@
 
         /**
          * setta le dimensioni reperto
-         *
-         * @param [type] $dimensioni
+         * @param string $dimensioni
          * @return void
          */
         public function setDimensioni($dimensioni){
@@ -229,8 +211,7 @@
 
         /**
          * setta il valore del reperto
-         *
-         * @param [type] $valore
+         * @param double $valore
          * @return void
          */
         public function setValore($valore){
@@ -239,8 +220,7 @@
 
         /**
          * setta il nome del reperto
-         *
-         * @param [type] $titolo
+         * @param string $titolo
          * @return void
          */
         public function setTitolo($titolo){
@@ -249,8 +229,7 @@
 
         /**
          * setta il tipo del reperto
-         *
-         * @param [type] $tipo
+         * @param string $tipo
          * @return void
          */
         public function setTipo($tipo){
@@ -258,9 +237,8 @@
         }
 
         /**
-         * setta l'id autore del reperto
-         *
-         * @param [type] $id_autore
+         * setta il nome dell'autore del reperto
+         * @param string $nome_autore
          * @return void
          */
         public function setNomeAutore($nome_autore){
@@ -269,8 +247,7 @@
 
         /**
          * setta il peso del reperto
-         *
-         * @param [type] $peso
+         * @param double $peso
          * @return void
          */
         public function setPeso($peso){
@@ -279,8 +256,7 @@
 
         /**
          * setta il luogo della scoperta del reperto
-         *
-         * @param [type] $luogo_scoperta
+         * @param string $luogo_scoperta
          * @return void
          */
         public function setLuogoScoperta($luogo_scoperta){
@@ -289,8 +265,7 @@
 
         /**
          * setta la data scoperta del reperto
-         *
-         * @param [type] $data_scoperta
+         * @param string $data_scoperta
          * @return void
          */
         public function setDataScoperta($data_scoperta){
@@ -299,8 +274,7 @@
 
         /**
          * setta la bibliografia del reperto
-         *
-         * @param [type] $bibliografia
+         * @param string $bibliografia
          * @return void
          */
         public function setBibliografia($bibliografia){
@@ -309,8 +283,7 @@
 
         /**
          * setta la descrizione del reperto
-         *
-         * @param [type] $descrizione
+         * @param string $descrizione
          * @return void
          */
         public function setDescrizione($descrizione){
@@ -319,8 +292,7 @@
 
         /**
          * imposta pubblicato a "s" o "n"
-         *
-         * @param [type] $pubblicato
+         * @param char $pubblicato
          * @return void
          */
         public function setPubblicato($pubblicato){
@@ -329,8 +301,7 @@
 
         /**
          * setta l'id del proprietario del reperto
-         *
-         * @param [type] $id_proprietario
+         * @param int $id_proprietario
          * @return void
          */
         public function setIdProprietario($id_proprietario){
@@ -339,8 +310,7 @@
 
         /**
          * setta l'id del museo in cui è custodito il reperto
-         *
-         * @param [type] $id_museo
+         * @param int $id_museo
          * @return void
          */
         public function setIDMuseo ($id_museo){

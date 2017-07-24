@@ -1,8 +1,10 @@
 <?php
-    ini_set('display_errors',1); 
-    error_reporting(E_ALL);
     include_once "/storage/ssd4/018/2182018/public_html/wp-content/plugins/extensionModel/model/museo.php";
-
+    
+    /**
+     * Interfaccia per la comunicazione al database con
+     * la tabella museo
+     */
     class MuseoDbInterface
     {
         const SERVER_NAME = "localhost";                                        //Host del database
@@ -13,7 +15,7 @@
         public $conn;                                                           //Connesione al database
 
         /**
-         * Costruttore per la classe DbInterface.
+         * Costruttore per la classe MuseoDbInterface.
          */
         public function __construct() {}
 
@@ -77,7 +79,8 @@
         }
 
         /**
-         * Preleva tutti i musei dal database
+         * Preleva il museo identifica dall'id passato come parametro
+         * @param int $id
          * @return array
          */
         public function readById($id)

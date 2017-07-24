@@ -1,4 +1,5 @@
 <?php
+
 /**
  * gestisce il tipo di file multimediale
  */
@@ -9,8 +10,8 @@ class TipoMultimedia{
     /**
      * costruttore parametrizzato
      *
-     * @param [type] $id
-     * @param [type] $nome
+     * @param int $id
+     * @param string $nome
      */
     public function __construct($id, $nome){
         $this->id=$id;
@@ -19,8 +20,7 @@ class TipoMultimedia{
 
     /**
      * restituisce l'id del tipo di file multimediale
-     *
-     * @return void
+     * @return int
      */
     public function getId(){
         return $this->id;
@@ -28,8 +28,7 @@ class TipoMultimedia{
 
     /**
      * restituisce il nome del tipo di file multimediale
-     *
-     * @return void
+     * @return string
      */
     public function getNome(){
         return $this->nome;
@@ -37,8 +36,7 @@ class TipoMultimedia{
 
     /**
      * setta l'id del tipo di file multimediale
-     *
-     * @param [type] $id
+     * @param int $id
      * @return void
      */
     public function setId($id){
@@ -47,8 +45,7 @@ class TipoMultimedia{
 
     /**
      * restituisce il nome del tipo di file multimediale
-     *
-     * @param [type] $nome
+     * @param string $nome
      * @return void
      */
     public function setNome($nome){

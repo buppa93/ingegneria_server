@@ -80,7 +80,7 @@
                                         "<td>".$museo->getId()."</td>".
                                         "<td>".$c_user->first_name." ".$c_user->last_name."</td>".
                                         "<td>".$c_user->ID."</td>";
-                                        if($current_user->isAmministratore() || $current_user->isDirettore())
+                                        if($current_user->isAmministratore())
                                         {
                                             $str .= '<td><a href="https://smartmuseum.000webhostapp.com/wp-content/plugins/gestore-operatori/elimina.php?id_museo='.
                                                     $museo->getId().'&id_operatore='.$c_user->ID.

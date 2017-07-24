@@ -23,21 +23,22 @@
        function gestore_musei_init()
        {
            register_setting('gestore_musei_options', 'gestore_musei_option', 'gestore_musei_validate');
+           wp_enqueue_script('jquery');
        }
-
-       //$musei = array();
-       //$direttori = array();
 
        //Aggiunge al menu
        function gestore_musei_add_page()
        {
-           add_options_page('Gestore Musei', 'Gestore Musei', 'manage_options', 'gestoremusei', 'gestoremusei_do_page');
+           add_menu_page('Gestore Musei', 'Gestore Musei', 'manage_options', 'gestoremusei', 'gestoremusei_do_page', 'dashicons-building');
        }
 
        function gestoremusei_do_page()
        {
+           $current_user = new CmUser(wp_get_current_user());
+           $current_user->setUserCookie();
            add_thickbox();
            ?>
+           <input type="hidden" name="userrole" id="userrole" value="<?php echo $_SESSION["UserRole"]; ?>" />
            <link rel="stylesheet" type="text/css" href="<?php echo plugins_url() . '/gestore-musei/tabstyle.css'?>">
            <script type="text/javascript" src="<?php echo plugins_url() . '/gestore-musei/tabaction.js'?>"></script>
            <div class="wrap">
@@ -65,6 +66,7 @@
                         $dbInstance->createConn();
                         $musei = $dbInstance->read();
                         $str = "";
+                        $usrId = $current_user->getUser()->ID;
                         for($i=0; $i<count($musei); $i++)
                         {
                             $str = "<tr>".
@@ -74,14 +76,20 @@
                                      "<td>".$musei[$i]->getCitta()."</td>".
                                      "<td>".$musei[$i]->getIndirizzo()."</td>".
                                      "<td>".$musei[$i]->getTelefono()."</td>".
-                                     "<td>".$musei[$i]->getOrari()."</td>".
-                                     '<td><a href="#TB_inline?width=600&height=550&inlineId=my-content-id" class="thickbox" id="'.
-                                     $musei[$i]->getId().'">'.
-                                     '<span class="dashicons dashicons-edit"></span></a></td>'.
-                                     '<td><a href="https://smartmuseum.000webhostapp.com/wp-content/plugins/gestore-musei/elimina.php?id='.
-                                     $musei[$i]->getId().'" '.
-                                     'id="'.$musei[$i]->getId().'"><span class="dashicons dashicons-trash"></span></a></td>'.
-                                 "</tr>";
+                                     "<td>".$musei[$i]->getOrari()."</td>";
+                                     if((($current_user->isDirettore()) && ($usrId == $musei[$i]->getIdDirettore()))
+                                            || $current_user->isAmministratore())
+                                     {
+                                        $str .= '<td><a href="#TB_inline?width=600&height=550&inlineId=edit-museo" class="thickbox" id="'.
+                                                $musei[$i]->getId().'" onClick="setEditPage('.$musei[$i]->getId().', '.$musei[$i]->getIdDirettore().
+                                                ', \''.$musei[$i]->getNome().'\', \''.$musei[$i]->getCitta().'\', \''.$musei[$i]->getIndirizzo()
+                                                .'\', \''.$musei[$i]->getTelefono().'\', \''.$musei[$i]->getOrari().'\' )">'.
+                                                '<span class="dashicons dashicons-edit edit-mus"></span></a></td>'.
+                                                '<td><a href="https://smartmuseum.000webhostapp.com/wp-content/plugins/gestore-musei/elimina.php?id='.
+                                                $musei[$i]->getId().'" '.
+                                                'id="'.$musei[$i]->getId().'"><span class="dashicons dashicons-trash trash-mus"></span></a></td>';
+                                     }
+                                 $str .= "</tr>";
                             echo $str;
                         }
                         $dbInstance->closeConn();
@@ -89,7 +97,7 @@
                 </table>
                 
             </div>
-            <div id="Aggiungi" class="tabcontent">
+            <div id="Aggiungi" class="tabcontent aggiungimus">
                 <h3>Aggiungi</h3>
                 <p>Questa pagina aggiunge un museo.</p> 
                 <form method="post" action="<?php echo plugins_url() . '/gestore-musei/inserisci_museo.php' ?>">
@@ -110,14 +118,15 @@
                                 <td>
                                     <select name="direttore">
                                         <?php
-                                            $personaDbInstance = new PersonaDbInterface();
-                                            $personaDbInstance->createConn();
-                                            $direttori = $personaDbInstance->readOnlyDirettori();
+                                            $direttori = get_users(array(
+                                                                            'role'   => 'editor',
+                                                                            'fields' => 'all'
+                                                                        ));
                                             $str = "";
-                                            for($i=0; $i<count($direttori); $i++)
+                                            foreach($direttori as $direttore)
                                             {
-                                                $str = '<option value="'.$direttori[$i]->getNumeroDocumento().
-                                                     '">'.$direttori[$i]->getNome().' '.$direttori[$i]->getCognome().
+                                                $str = '<option value="'.$direttore->ID.
+                                                     '">'.$direttore->first_name.' '.$direttore->last_name.
                                                      '</option>';
                                                 echo $str;
                                             }
@@ -170,7 +179,7 @@
                             <th scope="row">
                                 <td>
                                     <p class="submit">
-                                        <input type="submit" class="button-primary" value="Inserisci" />
+                                        <input type="submit" id="submitmus" class="button-primary" value="Inserisci" />
                                     </p>
                                 </td>
                             </th>
@@ -184,13 +193,25 @@
                 // Get the element with id="defaultOpen" and click on it
                 document.getElementById("defaultOpen").click();
             </script>
+            <script type="text/javascript">
+                function setEditPage(id, idDirettore, nome, citta, indirizzo, telefono, orari)
+                {
+                    document.getElementById("editid").value=id;
+                    document.getElementById("editdirettore").value=idDirettore;
+                    document.getElementById("editnome").value=nome;
+                    document.getElementById("editcitta").value=citta;
+                    document.getElementById("editindirizzo").value=indirizzo;
+                    document.getElementById("edittelefono").value=telefono;
+                    document.getElementById("editorari").value=orari;
+                }
+            </script>
            <?php
        }
 
        function makeMuseiModal()
        { 
             ?> 
-            <div id="my-content-id" style="display:none;">
+            <div id="edit-museo" style="display:none;">
                 <h2>Modifica Museo</h2>
                 <form method="post" action="<?php echo plugins_url() . '/gestore-musei/modifica.php' ?>">
                     <?php settings_fields("gestore_musei_options"); ?>
@@ -200,7 +221,7 @@
                             <th scope="row">
                                 ID
                                 <td>
-                                    <input type="number" name="idm" class="regular-text code" />
+                                    <input type="number" id="editid" name="idm" class="regular-text code" />
                                 </td>
                             </th>
                         </tr>
@@ -208,16 +229,17 @@
                             <th scope="row">
                                 DIRETTORE
                                 <td>
-                                    <select name="direttorem">
+                                    <select name="direttorem" id="editdirettore">
                                         <?php
-                                            $personaDbInstance = new PersonaDbInterface();
-                                            $personaDbInstance->createConn();
-                                            $direttori = $personaDbInstance->readOnlyDirettori();
+                                            $direttori = get_users(array(
+                                                                            'role'   => 'editor',
+                                                                            'fields' => 'all'
+                                                                        ));
                                             $str = "";
-                                            for($i=0; $i<count($direttori); $i++)
+                                            foreach($direttori as $direttore)
                                             {
-                                                $str = '<option value="'.$direttori[$i]->getNumeroDocumento().
-                                                     '">'.$direttori[$i]->getNome().' '.$direttori[$i]->getCognome().
+                                                $str = '<option value="'.$direttore->ID.
+                                                     '">'.$direttore->first_name.' '.$direttore->last_name.
                                                      '</option>';
                                                 echo $str;
                                             }
@@ -230,7 +252,7 @@
                             <th scope="row">
                                 TELEFONO
                                 <td>
-                                    <input type="tel" name="telefonom" class="regular-text code" />
+                                    <input type="tel" id="edittelefono" name="telefonom" class="regular-text code" />
                                 </td>
                             </th>
                         </tr>
@@ -238,7 +260,7 @@
                             <th scope="row">
                                 NOME
                                 <td>
-                                    <input type="text" name="nomem" class="regular-text code" />
+                                    <input type="text" id="editnome" name="nomem" class="regular-text code" />
                                 </td>
                             </th>
                         </tr>
@@ -246,7 +268,7 @@
                             <th scope="row">
                                 CITTA'
                                 <td>
-                                    <input type="text" name="cittam" class="regular-text code" />
+                                    <input type="text" id="editcitta" name="cittam" class="regular-text code" />
                                 </td>
                             </th>
                         </tr>
@@ -254,7 +276,7 @@
                             <th scope="row">
                                 INDIRIZZO
                                 <td>
-                                    <input type="text" name="indirizzom" class="regular-text code" />
+                                    <input type="text" id="editindirizzo" name="indirizzom" class="regular-text code" />
                                 </td>
                             </th>
                         </tr>
@@ -262,7 +284,7 @@
                             <th scope="row">
                                 ORARI
                                 <td>
-                                    <textarea name="orarim" rows="15" cols="50"></textarea>
+                                    <textarea id="editorari" name="orarim" rows="15" cols="50"></textarea>
                                 </td>
                             </th>
                         </tr>
@@ -270,13 +292,14 @@
                             <th scope="row">
                                 <td>
                                     <p class="submit">
-                                        <input type="submit" class="button-primary" value="Modifica" />
+                                        <input type="submit" id="editmus" class="button-primary" value="Modifica" />
                                     </p>
                                 </td>
                             </th>
                         </tr>
                     </table>
                 </form>
+                <script type="text/javascript" src="../wp-content/plugins/extensionModel/securityCheck.js" />
             </div>
 
             <?php

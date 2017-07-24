@@ -1,6 +1,8 @@
 <?php
-    ini_set('display_errors',1); 
-    error_reporting(E_ALL);
+    /**
+     * Script che inserisce nel database il museo
+     * avente i parametri spediti in POST
+     */
     include_once "/storage/ssd4/018/2182018/public_html/wp-content/plugins/extensionModel/dbInterfaces/MuseoDbInterface.php";
 
     $id = $_POST['id'];

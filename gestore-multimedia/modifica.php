@@ -1,6 +1,8 @@
 <?php
-    ini_set('display_errors',1); 
-    error_reporting(E_ALL);
+    /**
+     * Script che modifica sul database il file multimediale
+     * con i parametri speditoìi in GET
+     */
     include_once "/storage/ssd4/018/2182018/public_html/wp-content/plugins/extensionModel/dbInterfaces/MultimediaDbInterface.php";
 
     $id = $_POST['idm'];

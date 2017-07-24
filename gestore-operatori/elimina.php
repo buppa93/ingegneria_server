@@ -1,6 +1,8 @@
 <?php
-    ini_set('display_errors',1); 
-    error_reporting(E_ALL);
+    /**
+     * Script che elimina dal database l'associazione museo-operatore
+     * avente gli id uguali agli argomenti id spedito in GET
+     */
     include_once "/storage/ssd4/018/2182018/public_html/wp-content/plugins/extensionModel/dbInterfaces/MuseoOperatoreDbInterface.php";
 
     $id_museo = $_GET["id_museo"];

@@ -1,6 +1,8 @@
 <?php
-    ini_set('display_errors',1); 
-    error_reporting(E_ALL);
+    /**
+     * Script che inserisce sul database l'associazione museo-operatore
+     * avente  gli id uguali agli argomenti spediti in POST
+     */
     include_once "/storage/ssd4/018/2182018/public_html/wp-content/plugins/extensionModel/dbInterfaces/MuseoOperatoreDbInterface.php";
 
     setcookie("insert", "");

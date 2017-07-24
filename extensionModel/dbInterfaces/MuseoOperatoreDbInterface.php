@@ -1,8 +1,10 @@
 <?php
-    ini_set('display_errors',1); 
-    error_reporting(E_ALL);
     include_once '/storage/ssd4/018/2182018/public_html/wp-content/plugins/extensionModel/model/museo-operatore.php';
 
+    /**
+     * Interfaccia per la comunicazione al database con
+     * la tabella museo-operatore
+     */
     class MuseoOperatoreDbInterface
     {
         const SERVER_NAME = "localhost";                                        //Host del database
@@ -13,7 +15,7 @@
         public $conn;                                                           //Connesione al database
 
         /**
-         * Costruttore per la classe MultimediaDbInterface.
+         * Costruttore per la classe MuseoOperatoreDbInterface.
          */
         public function __construct() {}
 
@@ -33,8 +35,8 @@
         }
 
         /**
-         * Inserisce nel database un nuovo multimedia
-         * @param Multimedia $multimedia
+         * Inserisce nel database una nuova associazione museo-operatore
+         * @param MuseoOpertaore $museoOperatore
          */
         public function create($museoOperatore)
         {
@@ -46,7 +48,8 @@
         }
 
         /**
-         * Preleva tutti i multimedia dal database
+         * Preleva tutte le associazioni museo-operatore
+         * dal database
          * @return array
          */
         public function read()
@@ -73,8 +76,10 @@
         }
 
         /**
-         * Cancella il multimedia avente id uguale passato come parametro
-         * @param int $id
+         * Cancella l'associzione museo-operatore avente ids uguali a quelli
+         * passati come parametro
+         * @param int $id_museo
+         * @param int $id_operatore
          * @return boolean true in caso di successo, false altrimenti
          */
         public function delete($id_museo, $id_operatore)
